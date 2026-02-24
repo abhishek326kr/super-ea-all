@@ -1,0 +1,326 @@
+================================================================================
+YOPIPS DATABASE CONNECTION VERIFICATION REPORT
+================================================================================
+Date: 2026-02-07
+Database: YoPips (PostgreSQL)
+Connection Status: SUCCESSFUL
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+All 5 verification tests PASSED successfully:
+  [PASS] 1. Database connection established
+  [PASS] 2. Tables listed successfully
+  [PASS] 3. Blog table existence confirmed
+  [PASS] 4. Exact table names retrieved
+  [PASS] 5. Information schema queries successful
+
+================================================================================
+TEST RESULTS DETAILS
+================================================================================
+
+1. DATABASE CONNECTION
+   Status: SUCCESS
+   - ConnectionManager instance created successfully
+   - YoPips engine retrieved from connection pool
+   - Database connection established and verified
+   - Connection string working as expected
+
+2. TABLES IN YOPIPS DATABASE
+   Total Tables: 4
+
+   Exact table names (case-sensitive):
+   - blog_categories
+   - blogs
+   - categories
+   - seo_meta
+
+3. BLOG TABLE EXISTENCE
+   Status: FOUND
+   - Table name: "blogs" (lowercase 's')
+   - NOT "blog" (singular)
+   - NOT "Blog" (capital B)
+   - The exact table name is "blogs" (all lowercase, plural)
+
+4. TABLE NAMES (CASE-SENSITIVE VERIFICATION)
+   All table names use lowercase:
+   - blog_categories (15 characters)
+   - blogs (5 characters)
+   - categories (10 characters)
+   - seo_meta (8 characters)
+
+5. INFORMATION_SCHEMA QUERIES
+   Status: SUCCESS
+   - Tables query: Retrieved 4 BASE TABLEs
+   - Columns query: Retrieved column metadata successfully
+   - All information_schema queries executed without errors
+
+================================================================================
+DETAILED SCHEMA: "blogs" TABLE
+================================================================================
+
+PRIMARY KEY:
+  - id (BIGINT, NOT NULL, Autoincrement)
+    Constraint: blogs_pkey
+
+COLUMNS (13 total):
+
+  1. id
+     - Type: BIGINT
+     - Nullable: NO
+     - Auto-increment: YES
+     - Default: nextval('blogs_id_seq'::regclass)
+
+  2. title
+     - Type: VARCHAR(255)
+     - Nullable: NO
+
+  3. seo_slug
+     - Type: VARCHAR(255)
+     - Nullable: NO
+     - Has UNIQUE index: blogs_seo_slug_key
+
+  4. status
+     - Type: VARCHAR(9)
+     - Nullable: NO
+     - Likely values: published, draft, etc.
+
+  5. views
+     - Type: BIGINT
+     - Nullable: YES
+     - Default: 0
+
+  6. created_at
+     - Type: TIMESTAMP
+     - Nullable: NO
+     - Default: CURRENT_TIMESTAMP
+
+  7. content
+     - Type: TEXT
+     - Nullable: NO
+
+  8. author
+     - Type: VARCHAR(255)
+     - Nullable: NO
+
+  9. featured_image
+     - Type: VARCHAR(255)
+     - Nullable: NO
+
+  10. tags
+      - Type: VARCHAR(255)
+      - Nullable: NO
+
+  11. category_id
+      - Type: BIGINT
+      - Nullable: NO
+
+  12. download_link
+      - Type: VARCHAR(255)
+      - Nullable: YES
+
+  13. updated_at
+      - Type: TIMESTAMP
+      - Nullable: NO
+      - Default: CURRENT_TIMESTAMP
+
+INDEXES:
+  - Primary Key: id
+  - Unique Index: seo_slug (blogs_seo_slug_key)
+
+FOREIGN KEYS:
+  - None defined directly on "blogs" table
+  - However, "blog_categories" table references blogs.id
+  - And "seo_meta" table references blogs.id
+
+CURRENT DATA:
+  - Total rows: 0 (empty table)
+
+================================================================================
+RELATED TABLES
+================================================================================
+
+1. blog_categories (Junction/Bridge Table)
+   Columns:
+   - blog_id (BIGINT)
+   - category_id (INTEGER)
+
+   Foreign Keys:
+   - blog_id -> blogs.id
+   - category_id -> categories.category_id
+
+   Purpose: Many-to-many relationship between blogs and categories
+
+2. categories
+   Purpose: Stores category definitions
+   Referenced by: blog_categories table
+
+3. seo_meta (SEO Metadata Table)
+   Columns:
+   - id (INTEGER)
+   - post_id (BIGINT) -> blogs.id
+   - seo_title (VARCHAR 255)
+   - seo_description (TEXT)
+   - seo_keywords (TEXT)
+   - seo_slug (VARCHAR 255)
+   - canonical_url (VARCHAR 255)
+   - meta_robots (VARCHAR 17)
+   - og_title (VARCHAR 255)
+   - og_description (TEXT)
+   - og_image (VARCHAR 255)
+   - created_at (TIMESTAMP)
+   - updated_at (TIMESTAMP)
+
+   Foreign Keys:
+   - post_id -> blogs.id
+
+   Purpose: SEO and Open Graph metadata for each blog post
+
+================================================================================
+DATA TYPE DISTRIBUTION
+================================================================================
+
+BIGINT (3 columns):
+  - id (Primary Key)
+  - views (Counter)
+  - category_id (Foreign Key reference)
+
+VARCHAR (7 columns):
+  - title (255)
+  - seo_slug (255) [UNIQUE]
+  - status (9)
+  - author (255)
+  - featured_image (255)
+  - tags (255)
+  - download_link (255) [NULLABLE]
+
+TEXT (1 column):
+  - content (Main blog content)
+
+TIMESTAMP (2 columns):
+  - created_at (with default)
+  - updated_at (with default)
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+1. CORRECT TABLE NAME: "blogs" (not "blog" or "Blog")
+   - Always use lowercase "blogs" when referencing the table
+   - Case sensitivity matters in PostgreSQL
+
+2. SCHEMA IS WELL-STRUCTURED:
+   - Has auto-incrementing primary key
+   - Has unique constraint on seo_slug (prevents duplicates)
+   - Has proper timestamp tracking (created_at, updated_at)
+   - Supports SEO metadata through separate seo_meta table
+   - Supports categories through many-to-many relationship
+
+3. REQUIRED FIELDS FOR BLOG POST:
+   - title (required)
+   - seo_slug (required, must be unique)
+   - status (required)
+   - content (required)
+   - author (required)
+   - featured_image (required)
+   - tags (required)
+   - category_id (required)
+
+4. OPTIONAL FIELDS:
+   - views (defaults to 0)
+   - download_link (can be NULL)
+
+5. AUTOMATIC FIELDS:
+   - id (auto-generated)
+   - created_at (auto-set to current timestamp)
+   - updated_at (auto-set to current timestamp)
+
+6. SEO SUPPORT:
+   - seo_meta table provides comprehensive SEO fields
+   - Supports Open Graph metadata for social sharing
+   - Has canonical URL support
+   - Supports meta robots directives
+
+================================================================================
+CONNECTION DETAILS (FROM LOG)
+================================================================================
+
+Connection restored successfully with message:
+  "Restored connection: YoPips"
+
+This confirms:
+  - Connection is persisted in the admin database (site_connections table)
+  - ConnectionManager successfully loaded the connection on startup
+  - Connection pool is active and ready for queries
+
+Other connections restored:
+  - Flexy_Db
+  - TradeCopier
+  - Fxtrust
+  - ForexFactory
+  - YoForexEA
+  - MQL5
+
+Failed connections (expected - services not available):
+  - YoForexEA Database (connection timeout)
+  - FXCracked (connection refused)
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. When writing queries, always use exact table name: "blogs" (lowercase)
+
+2. When inserting blog posts, ensure all required fields are provided:
+   - title
+   - seo_slug (must be unique)
+   - status
+   - content
+   - author
+   - featured_image
+   - tags
+   - category_id
+
+3. Consider creating corresponding seo_meta record for each blog post
+   for complete SEO optimization
+
+4. Use the blog_categories junction table to assign multiple categories
+   to a single blog post if needed
+
+5. The table is currently empty (0 rows), so it's ready for new content
+
+================================================================================
+SQL EXAMPLES
+================================================================================
+
+Count blogs:
+  SELECT COUNT(*) FROM blogs;
+
+Insert a blog post:
+  INSERT INTO blogs (
+    title, seo_slug, status, content, author,
+    featured_image, tags, category_id
+  ) VALUES (
+    'My Blog Title',
+    'my-blog-title',
+    'published',
+    '<p>Blog content here</p>',
+    'Admin',
+    '/images/featured.jpg',
+    'trading,forex',
+    1
+  ) RETURNING id;
+
+Get all published blogs:
+  SELECT * FROM blogs WHERE status = 'published' ORDER BY created_at DESC;
+
+Get blog with SEO metadata:
+  SELECT b.*, s.*
+  FROM blogs b
+  LEFT JOIN seo_meta s ON b.id = s.post_id
+  WHERE b.seo_slug = 'my-blog-title';
+
+================================================================================
+END OF REPORT
+================================================================================

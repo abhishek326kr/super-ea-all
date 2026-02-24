@@ -1,0 +1,14 @@
+google.generativeai 
+openai
+fastapi
+uvicorn
+pydantic[email]
+sqlalchemy
+psycopg2-binary
+python-dotenv
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+boto3
+python-multipart
+Pillow

@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  # ── Backend API (FastAPI) ──────────────────────────────
+  api:
+    build: ./super-ea-server
+    image: firkydost/algotrading-all:api
+    container_name: super-ea-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./super-ea-server/.env
+    volumes:
+      - api-data:/app          # persist SQLite DB
+    restart: unless-stopped
+
+  # ── Super Admin Client (Vite + Nginx) ──────────────────
+  super-admin-client:
+    build: ./super-ea-client
+    image: firkydost/algotrading-all:client
+    container_name: super-ea-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ── Algotrading Landing Page (Next.js) ─────────────────
+  algotrading:
+    build: ./algotrading
+    image: firkydost/algotrading-all:landing
+    container_name: algotrading-bot
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+
+volumes:
+  api-data:

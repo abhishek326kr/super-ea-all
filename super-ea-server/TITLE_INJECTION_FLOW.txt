@@ -1,0 +1,157 @@
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      TITLE INJECTION FLOW DIAGRAM                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+STEP 1: Content Generation
+┌───────────────────────────────────────┐
+│  Generated Content Payload            │
+│  ───────────────────────────────      │
+│  {                                    │
+│    "title": "My Blog Post",           │  ← Title field generated
+│    "content": "<p>Content...</p>",    │
+│    "slug": "my-blog-post",            │
+│    "author": "John Doe",              │
+│    "seo_description": "SEO desc...",  │
+│    "seo_keywords": "keywords..."      │
+│  }                                    │
+└───────────────────────────────────────┘
+                    ↓
+STEP 2: SEO Table Detection
+┌───────────────────────────────────────┐
+│  _detect_seo_table(engine, "Blog")    │
+│  ───────────────────────────────      │
+│  Result: {                            │
+│    "table": "SeoMeta",                │  ← SEO table found!
+│    "fk_column": "blog_id"             │
+│  }                                    │
+└───────────────────────────────────────┘
+                    ↓
+STEP 3: Payload Splitting
+┌───────────────────────────────────────┐
+│  _split_seo_payload(payload)          │
+│  ───────────────────────────────      │
+│                                       │
+│  1. Find title field                  │
+│     title_key = "title"               │
+│     title_value = "My Blog Post"      │
+│                                       │
+│  2. Split into two payloads           │
+│                                       │
+│     Blog Payload                      │
+│     ────────────                      │
+│     {                                 │
+│       "title": "My Blog Post",        │  ← Title HERE
+│       "content": "<p>Content...</p>", │
+│       "slug": "my-blog-post",         │
+│       "author": "John Doe"            │
+│     }                                 │
+│                                       │
+│     SEO Payload                       │
+│     ───────────                       │
+│     {                                 │
+│       "title": "My Blog Post",        │  ← Title HERE too!
+│       "seo_description": "SEO...",    │
+│       "seo_keywords": "keywords..."   │
+│     }                                 │
+│                                       │
+│  3. Ensure title in BOTH              │
+│     ✓ Title in blog_payload           │
+│     ✓ Title in seo_payload            │
+└───────────────────────────────────────┘
+                    ↓
+STEP 4: Blog Table Injection
+┌───────────────────────────────────────┐
+│  INSERT INTO "Blog"                   │
+│  ───────────────────────────────      │
+│  (title, content, slug, author)       │
+│  VALUES (                             │
+│    'My Blog Post',                    │  ← Title inserted
+│    '<p>Content...</p>',               │
+│    'my-blog-post',                    │
+│    'John Doe'                         │
+│  )                                    │
+│  RETURNING id                         │
+│                                       │
+│  → blog_id = 123                      │  ← New blog ID
+└───────────────────────────────────────┘
+                    ↓
+STEP 5: SEO Table Injection
+┌───────────────────────────────────────┐
+│  _inject_seo_data(...)                │
+│  ───────────────────────────────      │
+│                                       │
+│  1. Map SEO fields to columns         │
+│     "title" → "seo_title"             │  ← Title mapped
+│     "seo_description" → "description" │
+│     "seo_keywords" → "keywords"       │
+│                                       │
+│  2. INSERT INTO "SeoMeta"             │
+│     (blog_id, seo_title, description) │
+│     VALUES (                          │
+│       123,                            │  ← Foreign key
+│       'My Blog Post',                 │  ← Title inserted!
+│       'SEO desc...'                   │
+│     )                                 │
+└───────────────────────────────────────┘
+                    ↓
+STEP 6: Result
+┌─────────────────────────────────────────────────────────────────┐
+│                         DATABASE STATE                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Blog Table                    SeoMeta Table                   │
+│  ──────────                    ────────────                    │
+│  ┌────┬──────────────┐         ┌────┬─────────┬──────────────┐│
+│  │ id │ title        │         │ id │ blog_id │ seo_title    ││
+│  ├────┼──────────────┤         ├────┼─────────┼──────────────┤│
+│  │123 │My Blog Post  │  ←──┬──→│ 45 │   123   │My Blog Post  ││
+│  └────┴──────────────┘      │   └────┴─────────┴──────────────┘│
+│         ↑                   │            ↑                    │
+│         │                   │            │                     │
+│   Title for display    Foreign Key  Title for SEO             │
+│   on website              reference    meta tags              │
+└─────────────────────────────────────────────────────────────────┘
+                    ↓
+STEP 7: Website Display
+┌─────────────────────────────────────────────────────────────────┐
+│                         BLOG PAGE                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  <html>                                                         │
+│    <head>                                                       │
+│      <title>My Blog Post</title>        ← From SeoMeta         │
+│      <meta name="description"           ← From SeoMeta         │
+│            content="SEO desc...">                               │
+│    </head>                                                      │
+│    <body>                                                       │
+│      <h1>My Blog Post</h1>              ← From Blog table      │
+│      <p>Content...</p>                  ← From Blog table      │
+│    </body>                                                      │
+│  </html>                                                        │
+│                                                                 │
+│  ✅ Title displays on page (from Blog table)                    │
+│  ✅ SEO meta tags complete (from SeoMeta table)                 │
+└─────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+
+KEY LOGGING MESSAGES TO WATCH FOR:
+
+[MULTI-TABLE] Detected SEO table: SeoMeta
+[MULTI-TABLE] Split payload - Blog fields: 4, SEO fields: 3
+[TITLE INJECTION] Added title to blog_payload: title
+[TITLE INJECTION] Added title to seo_payload: title
+Successfully inserted row into Blog with ID: 123
+[SEO INJECT] Inserting SEO data into SeoMeta for blog ID: 123
+[SEO MAP - TITLE] title -> seo_title
+[SEO INJECT] Successfully inserted 3 SEO fields into SeoMeta
+
+═══════════════════════════════════════════════════════════════════
+
+BENEFITS:
+✅ Title always appears on website (from Blog table)
+✅ SEO metadata is complete (includes title for meta tags)
+✅ No duplication in database (proper normalization with FK)
+✅ Works automatically without manual intervention
+✅ Handles various title field naming conventions
+✅ Detailed logging for debugging and verification

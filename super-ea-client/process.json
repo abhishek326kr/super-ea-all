@@ -1,0 +1,19 @@
+{
+  apps: [
+    {
+      name: "remix-app",
+      script: "build/index.js", // Use "server/index.js" if using the Express adapter
+      instances: 1,
+      exec_mode: "fork",
+      env: {
+        NODE_ENV: "production",
+        PORT: 3300
+      },
+      error_file: "./logs/pm2-error.log",
+      out_file: "./logs/pm2-out.log",
+      log_date_format: "YYYY-MM-DD HH:mm:ss",
+      // Increased memory limit for Remix SSR
+      max_memory_restart: "1G" 
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+// Prisma Schema for ForexFactory/AlgotradingbotEA Platform
+// Database: SQLite (Local Dev)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ==================== ENUMS ====================
+// Note: SQLite doesn't support native enums, Prisma handles this mapping likely as strings in SQLite.
+
+// ==================== USER MANAGEMENT ====================
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String   // bcrypt hashed
+  role        String   @default("viewer") // Simulating Enum: admin, editor, viewer
+  name        String?
+  phone       String?
+  country     String?
+  countryCode String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  posts         Blog[]         @relation("AuthorPosts")
+  downloads     UserDownload[]
+  savedArticles SavedArticle[]
+  recentBlogs   RecentBlog[]
+  comments      Comment[]
+}
+
+// ==================== CONTENT MANAGEMENT ====================
+model Blog {
+  id             Int        @id @default(autoincrement())
+  title          String
+  seoSlug        String     @unique
+  status         String     @default("draft") // Simulating Enum: published, draft
+  content        String
+  excerpt        String?
+  author         String
+  authorId       Int?
+  featuredImages String?    // Changed from String[] for SQLite
+  tags           String?
+  downloadLink   String?
+  views          Int        @default(0)
+
+  // EA-specific fields
+  eaType         String?
+  version        String?
+  platform       String?
+  minDeposit     String?
+  timeframe      String?
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  // Relations
+  authorUser     User?          @relation("AuthorPosts", fields: [authorId], references: [id])
+  categories     BlogCategory[]
+  comments       Comment[]
+  seoMeta        SeoMeta[]
+  savedBy        SavedArticle[]
+  recentViews    RecentBlog[]
+  downloads      UserDownload[]
+}
+
+model Category {
+  id          Int            @id @default(autoincrement())
+  categoryId  Int            @unique
+  name        String         @unique
+  description String?
+  status      String         @default("active") // Simulating Enum: active, inactive
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  blogs BlogCategory[]
+}
+
+model BlogCategory {
+  id         Int      @id @default(autoincrement())
+  blogId     Int
+  categoryId Int
+  createdAt  DateTime @default(now())
+
+  blog     Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [categoryId])
+
+  @@unique([blogId, categoryId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  blogId    Int
+  userId    Int
+  content   String
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ==================== SIGNALS ====================
+model Signal {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(uuid())
+  title       String
+  description String?
+  filePath    String
+  mime        String
+  sizeBytes   Int
+  downloads   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userDownloads UserDownload[]
+}
+
+// ==================== USER ACTIVITY TRACKING ====================
+model UserDownload {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  blogId    Int?
+  signalId  Int?
+  title     String
+  type      String   // EA, Indicator, Tool, Signal
+  fileSize  String?
+  createdAt DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blog   Blog?   @relation(fields: [blogId], references: [id], onDelete: SetNull)
+  signal Signal? @relation(fields: [signalId], references: [id], onDelete: SetNull)
+}
+
+model SavedArticle {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  blogId    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blogId])
+}
+
+model RecentBlog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  blogId    Int
+  visitedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blogId])
+}
+
+// ==================== SEO & AUTOMATION ====================
+model SeoMeta {
+  id             Int      @id @default(autoincrement())
+  postId         Int
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  canonicalUrl   String?
+  metaRobots     String   @default("index_follow") // Simulating Enum
+  ogTitle        String?
+  ogDescription  String?
+  ogImage        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  blog Blog @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model SeoAutomation {
+  id        Int      @id @default(autoincrement())
+  postId    Int?
+  taskType  String   // meta_generation, schema_generation, etc.
+  status    String   @default("pending") // pending, processing, completed, failed
+  input     String?
+  output    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==================== NEWSLETTER ====================
+model NewsletterSubscription {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  status       String   @default("pending") // pending, confirmed, unsubscribed
+  confirmToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ==================== CONTACT ====================
+model ContactSubmission {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    String   @default("new") // new, read, replied
+  createdAt DateTime @default(now())
+}

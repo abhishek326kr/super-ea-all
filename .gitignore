@@ -1,0 +1,44 @@
+# Root .gitignore for the whole project
+
+# Node/NPM
+node_modules/
+dist/
+.next/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+test_venv/
+.pytest_cache/
+
+# Databases
+*.db
+*.sqlite3
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs and debug files
+*.log
+debug_*.py
+test_*.py
+check_*.py
+dia_*.py
+dia_*.txt
+inspect_*.py
+reload_*.py
+simple_*.py
+fix_*.py
+list_*.py
+api_test_result.txt
+debug_output.txt
+
+# OS generated files
+.DS_Store
+Thumbs.db
