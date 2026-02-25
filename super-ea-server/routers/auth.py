@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from typing import Optional
 import os
 from jose import jwt
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
