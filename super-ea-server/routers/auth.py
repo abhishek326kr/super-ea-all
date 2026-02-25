@@ -5,8 +5,11 @@ from typing import Optional
 import os
 from jose import jwt
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+# Load .env from the same directory as this project (super-ea-server/)
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -14,9 +17,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey1234567890")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
-
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "YoForex@101")
 
 class Token(BaseModel):
     access_token: str
@@ -39,8 +39,11 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 @router.post("/login", response_model=Token)
 async def login(request: LoginRequest):
-    # Simple check against env vars
-    if request.username == ADMIN_USERNAME and request.password == ADMIN_PASSWORD:
+    # Read credentials at request time so .env changes take effect without restart
+    admin_username = os.getenv("ADMIN_USERNAME", "admin")
+    admin_password = os.getenv("ADMIN_PASSWORD", "YoForex@101")
+    
+    if request.username == admin_username and request.password == admin_password:
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={"sub": request.username}, expires_delta=access_token_expires
