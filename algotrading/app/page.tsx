@@ -14,10 +14,10 @@ export default function Home() {
   const y = useTransform(scrollYProgress, [0, 1], [0, 50]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center overflow-x-hidden">
 
       {/* HER0 SEC: 2-Column Layout */}
-      <section className="w-full min-h-[90vh] pt-24 pb-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 relative">
+      <section className="w-full min-h-[90vh] pt-24 pb-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
         {/* Background Glows */}
         {/* Background Glows & Grid */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-neon-green/10 rounded-full blur-[150px] -z-10 animate-pulse" />

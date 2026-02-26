@@ -30,9 +30,13 @@
   animation: fadeInUp 0.8s ease-out forwards;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
-  overflow-x: clip;
 }
