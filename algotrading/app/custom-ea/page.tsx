@@ -138,12 +138,12 @@ export default function CustomEAPage() {
 
                     {/* Top WhatsApp Button */}
                     <a
-                        href="https://wa.me/917449454349"
+                        href="https://wa.me/918240026380"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex mb-8 px-6 py-2.5 bg-[#0047FF] text-white font-bold rounded-full hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(0,71,255,0.4)] transition-all"
                     >
-                        Whatsapp +917449454349
+                        Whatsapp +918240026380
                     </a>
 
                     <div className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4">Pricing Plan</div>
@@ -200,12 +200,12 @@ export default function CustomEAPage() {
 
                     {/* Bottom WhatsApp Button */}
                     <a
-                        href="https://wa.me/917449454349"
+                        href="https://wa.me/918240026380"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex mt-16 px-6 py-2.5 bg-[#0047FF] text-white font-bold rounded-full hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(0,71,255,0.4)] transition-all"
                     >
-                        Whatsapp +917449454349
+                        Whatsapp +918240026380
                     </a>
 
                 </div>

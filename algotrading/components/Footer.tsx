@@ -155,8 +155,8 @@ export default function Footer() {
                         </div>
                         <div className="flex items-start gap-3 text-gray-400 group">
                             <Phone className="w-5 h-5 text-neon-green mt-0.5 group-hover:drop-shadow-[0_0_8px_rgba(57,255,20,0.8)] transition-all" />
-                            <a href="tel:+1234567890" className="hover:text-white transition-colors">
-                                +1 (555) 123-4567
+                            <a href="tel:+918240026380" className="hover:text-white transition-colors">
+                                +91 82400 26380
                             </a>
                         </div>
                         <div className="flex items-start gap-3 text-gray-400">
