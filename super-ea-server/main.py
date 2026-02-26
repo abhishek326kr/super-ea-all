@@ -34,10 +34,10 @@ app = FastAPI(title="ContentNexus API (Super User)")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://superadmin.yoforex.co.in",  # Production
         "http://localhost:3000",             # Local Dev (Next.js)
         "http://localhost:5173",             # Local Dev (Vite)
         "http://localhost:8080",             # Local Dev (Other)
+        "https://admin.algotradingbot.online",  # Production
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
