@@ -591,7 +591,7 @@ async def get_site_posts(
 
             if category:
                 if has_cat_table:
-                    where_clauses.append(f'id IN (SELECT blogId FROM "BlogCategory" bc JOIN "Category" c ON bc.categoryId = c.categoryId WHERE c.name = :category)')
+                    where_clauses.append(f'id IN (SELECT "blogId" FROM "BlogCategory" bc JOIN "Category" c ON bc."categoryId" = c."categoryId" WHERE c.name = :category)')
                     params["category"] = category
                 else:
                     where_clauses.append("category = :category")
@@ -644,10 +644,10 @@ async def get_site_posts(
                 post_ids = [str(p["id"]) for p in posts]
                 ids_str = ",".join(post_ids)
                 cat_sql = text(f'''
-                    SELECT bc.blogId, c.name 
+                    SELECT bc."blogId", c.name 
                     FROM "BlogCategory" bc 
-                    JOIN "Category" c ON bc.categoryId = c.categoryId 
-                    WHERE bc.blogId IN ({ids_str})
+                    JOIN "Category" c ON bc."categoryId" = c."categoryId" 
+                    WHERE bc."blogId" IN ({ids_str})
                 ''')
                 cat_rows = conn.execute(cat_sql).fetchall()
                 cat_map = {row[0]: row[1] for row in cat_rows}
@@ -709,8 +709,8 @@ async def get_single_post(
                     cat_sql = text('''
                         SELECT c.name 
                         FROM "BlogCategory" bc 
-                        JOIN "Category" c ON bc.categoryId = c.categoryId 
-                        WHERE bc.blogId = :id
+                        JOIN "Category" c ON bc."categoryId" = c."categoryId" 
+                        WHERE bc."blogId" = :id
                     ''')
                     cat_row = conn.execute(cat_sql, {"id": post_id}).fetchone()
                     if cat_row:

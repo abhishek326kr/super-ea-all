@@ -1022,7 +1022,7 @@ class ContentOrchestrator:
         try:
             with engine.begin() as conn:
                 # 1. Check if Category exists
-                cat_sql = text('SELECT categoryId FROM "Category" WHERE name = :name')
+                cat_sql = text('SELECT "categoryId" FROM "Category" WHERE name = :name')
                 result = conn.execute(cat_sql, {"name": category_name}).fetchone()
                 
                 if result:
@@ -1030,13 +1030,13 @@ class ContentOrchestrator:
                     print(f"[CATEGORY INJECT] Category exists. ID: {category_id}")
                 else:
                     # Determine next categoryId (Prisma requires both `id` and `categoryId` in schema)
-                    max_id_sql = text('SELECT MAX(categoryId) FROM "Category"')
+                    max_id_sql = text('SELECT MAX("categoryId") FROM "Category"')
                     max_id_res = conn.execute(max_id_sql).scalar()
                     next_cat_id = (max_id_res or 0) + 1
                     
                     # 2. Create new Category
                     insert_cat_sql = text('''
-                        INSERT INTO "Category" (categoryId, name, status, createdAt, updatedAt) 
+                        INSERT INTO "Category" ("categoryId", name, status, "createdAt", "updatedAt") 
                         VALUES (:cid, :name, 'active', :now, :now)
                     ''')
                     conn.execute(insert_cat_sql, {
@@ -1049,7 +1049,7 @@ class ContentOrchestrator:
                 
                 # 3. Create mapping in BlogCategory table
                 map_sql = text('''
-                    INSERT INTO "BlogCategory" (blogId, categoryId, createdAt) 
+                    INSERT INTO "BlogCategory" ("blogId", "categoryId", "createdAt") 
                     VALUES (:bid, :cid, :now)
                 ''')
                 conn.execute(map_sql, {
@@ -1196,12 +1196,14 @@ class ContentOrchestrator:
         if category_name:
             try:
                 with engine.begin() as conn:
-                    # Check if it's a Prisma DB with Category mapping table
-                    cat_check = text("SELECT name FROM sqlite_master WHERE type='table' AND name='Category'")
-                    has_cat_table = conn.execute(cat_check).fetchone()
+                    # Check if it's a DB with Category mapping table (PostgreSQL-compatible)
+                    from sqlalchemy import inspect as sa_inspect
+                    inspector = sa_inspect(engine)
+                    all_tables = inspector.get_table_names()
+                    has_cat_table = "Category" in all_tables or "BlogCategory" in all_tables
                     if has_cat_table:
                         # Clear old mappings before injecting new one
-                        delete_old_sql = text('DELETE FROM "BlogCategory" WHERE blogId = :bid')
+                        delete_old_sql = text('DELETE FROM "BlogCategory" WHERE "blogId" = :bid')
                         conn.execute(delete_old_sql, {"bid": post_id})
                 
                 if 'has_cat_table' in locals() and has_cat_table:
