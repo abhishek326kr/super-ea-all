@@ -37,7 +37,7 @@ app.add_middleware(
         "http://localhost:3000",             # Local Dev (Next.js)
         "http://localhost:5173",             # Local Dev (Vite)
         "http://localhost:8080",             # Local Dev (Other)
-        "https://admin.algotradingbot.online",  # Production
+        "https://app.algotradingbot.online",  # Production
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
