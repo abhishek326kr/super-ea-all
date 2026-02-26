@@ -10,15 +10,21 @@ import { useEffect } from "react";
 
 interface BlogListProps {
     initialPosts: BlogPost[];
+    categories?: string[];
 }
 
-export default function BlogList({ initialPosts }: BlogListProps) {
+export default function BlogList({ initialPosts, categories }: BlogListProps) {
     const searchParams = useSearchParams();
     const initialCategory = searchParams.get("category");
     const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
+    // Use dynamic categories if provided, otherwise fallback to hardcoded
+    const categoryList = categories && categories.length > 0
+        ? categories
+        : [...BLOG_CATEGORIES];
+
     useEffect(() => {
-        if (initialCategory && BLOG_CATEGORIES.includes(initialCategory as any)) {
+        if (initialCategory && categoryList.includes(initialCategory)) {
             setSelectedCategory(initialCategory);
         }
     }, [initialCategory]);
@@ -34,7 +40,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
                 <div className="sticky top-24">
                     <h3 className="text-xl font-bold text-white mb-6 hidden lg:block">Categories</h3>
                     <div className="flex lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide">
-                        {BLOG_CATEGORIES.map((category) => (
+                        {categoryList.map((category) => (
                             <button
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}

@@ -1,6 +1,6 @@
 
 import BlogList from "@/components/BlogList";
-import { getAllPosts } from "@/lib/blog-data";
+import { getAllPosts, getAllCategories } from "@/lib/blog-data";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -10,7 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-    const posts = await getAllPosts();
+    const [posts, categories] = await Promise.all([
+        getAllPosts(),
+        getAllCategories()
+    ]);
 
     return (
         <div className="min-h-screen bg-black pt-32 pb-24 px-6 md:px-12 relative overflow-hidden">
@@ -31,9 +34,10 @@ export default async function BlogPage() {
 
                 {/* Blog Content with Sidebar */}
                 <Suspense fallback={<div className="text-white text-center">Loading categories...</div>}>
-                    <BlogList initialPosts={posts} />
+                    <BlogList initialPosts={posts} categories={categories} />
                 </Suspense>
             </div>
         </div>
     );
 }
+

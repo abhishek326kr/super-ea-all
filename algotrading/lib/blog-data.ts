@@ -22,6 +22,22 @@ export const BLOG_CATEGORIES = [
     "self-develop-bots"
 ] as const;
 
+export async function getAllCategories(): Promise<string[]> {
+    try {
+        const categories = await prisma.category.findMany({
+            where: { status: "active" },
+            orderBy: { name: "asc" }
+        });
+        if (categories.length > 0) {
+            return ["All", ...categories.map(c => c.name)];
+        }
+    } catch (e) {
+        console.error("Failed to fetch categories:", e);
+    }
+    // Fallback to hardcoded
+    return [...BLOG_CATEGORIES];
+}
+
 function mapToBlogPost(blog: any): BlogPost {
     const categoryName = blog.categories && blog.categories.length > 0
         ? blog.categories[0].category.name

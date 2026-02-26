@@ -598,6 +598,144 @@ async def get_site_posts(
                     params["category"] = category
             
             where_sql = " WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+
+# ==========================================
+# PUBLIC API FOR FRONTEND (algotradingbot.online)
+# ==========================================
+@app.get("/api/posts")
+async def get_public_posts(
+    category: str = None,
+    limit: int = 100,
+    manager: ConnectionManager = Depends(get_conn_manager)
+):
+    """
+    Public endpoint for the frontend Next.js application to fetch published blogs.
+    Always uses the 'algotrading' site connection.
+    """
+    from sqlalchemy import text
+    import datetime
+    
+    # Hardcoded site ID for the main public site
+    site_id = "algotrading"
+    
+    try:
+        # Check if algotrading site is configured
+        sites = manager.list_sites()
+        if not any(s["id"] == site_id for s in sites):
+            # Fallback to the first available site if algotrading is missing
+            if sites:
+                site_id = sites[0]["id"]
+            else:
+                return []
+                
+        engine = manager.get_engine(site_id)
+        config = manager.get_config(site_id)
+        table_name = manager.resolve_table_name(engine, config.target_table_name)
+        
+        with engine.connect() as conn:
+            where_clauses = ["status = 'published'"]
+            params = {"limit": limit}
+            
+            # Check for BlogCategory relationships
+            has_cat_table = False
+            try:
+                from sqlalchemy import inspect
+                inspector = inspect(engine)
+                tables = inspector.get_table_names()
+                if "BlogCategory" in tables and "Category" in tables:
+                    has_cat_table = True
+            except:
+                pass
+
+            if category:
+                if category != "All":
+                    if has_cat_table:
+                        where_clauses.append(f'id IN (SELECT "blogId" FROM "BlogCategory" bc JOIN "Category" c ON bc."categoryId" = c."categoryId" WHERE c.name = :category)')
+                        params["category"] = category
+                    else:
+                        where_clauses.append("category = :category")
+                        params["category"] = category
+            
+            where_sql = " WHERE " + " AND ".join(where_clauses)
+            
+            # Get published posts
+            sql = text(f'''
+                SELECT * FROM "{table_name}" 
+                {where_sql} 
+                ORDER BY "createdAt" DESC 
+                LIMIT :limit
+            ''')
+            result = conn.execute(sql, params)
+            rows = result.fetchall()
+            columns = result.keys()
+            
+            posts = [dict(zip(columns, row)) for row in rows]
+            
+            # Append Category details
+            cat_map = {}
+            if has_cat_table and posts:
+                post_ids = [str(p["id"]) for p in posts]
+                ids_str = ",".join(post_ids)
+                cat_sql = text(f'''
+                    SELECT bc."blogId", c.name 
+                    FROM "BlogCategory" bc 
+                    JOIN "Category" c ON bc."categoryId" = c."categoryId" 
+                    WHERE bc."blogId" IN ({ids_str})
+                ''')
+                cat_res = conn.execute(cat_sql)
+                for row in cat_res.fetchall():
+                    pid = row[0]
+                    cname = row[1]
+                    if pid not in cat_map:
+                        cat_map[pid] = []
+                    cat_map[pid].append(cname)
+            
+            # Format to match the Next.js BlogPost interface
+            formatted_posts = []
+            for p in posts:
+                # Format date
+                pub_date = "Recently"
+                raw_date = p.get("createdAt") or p.get("created_at") or datetime.datetime.now()
+                if isinstance(raw_date, str):
+                    try:
+                        raw_date = datetime.datetime.fromisoformat(raw_date.replace('Z', '+00:00'))
+                    except:
+                        pass
+                        
+                if isinstance(raw_date, datetime.datetime):
+                    pub_date = raw_date.strftime("%b %d, %Y")
+                
+                # Format category
+                cat_name = "pre-built bots"
+                if has_cat_table:
+                    cats = cat_map.get(p["id"], [])
+                    if cats:
+                        cat_name = cats[0]
+                elif p.get("category"):
+                    cat_name = p.get("category")
+                    
+                formatted_posts.append({
+                    "id": str(p["id"]),
+                    "title": p.get("title") or p.get("h1") or "",
+                    "slug": p.get("seoSlug") or p.get("slug") or str(p["id"]),
+                    "description": p.get("excerpt") or p.get("meta_description") or "",
+                    "content": p.get("content") or p.get("body_html") or "",
+                    "category": cat_name,
+                    "author": p.get("author") or "AlgoTeam",
+                    "publishDate": pub_date,
+                    "image": p.get("featuredImages") or p.get("image") or "https://images.unsplash.com/photo-1611974765270-ca12586343bb?q=80&w=1000&auto=format&fit=crop",
+                    "readTime": "5 min read",
+                    "isDownloadable": bool(p.get("downloadLink")),
+                    "downloadUrl": p.get("downloadLink"),
+                    "price": "Free" if p.get("downloadLink") else "Premium"
+                })
+                
+            return formatted_posts
+            
+    except Exception as e:
+        print(f"Public API error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
             
             # Build ORDER BY
             sort_map = {
