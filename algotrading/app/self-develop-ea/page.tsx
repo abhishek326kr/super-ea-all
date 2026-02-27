@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Code2, BookOpen, TestTube, Rocket, Users, Shield } from "lucide-react";
+import BlogSection from "@/components/BlogSection";
 
 export const metadata: Metadata = {
     title: "Self-Develop EA - AlgoTradingBot | Build Your Own Expert Advisor",
@@ -133,6 +134,14 @@ export default function SelfDevelopEAPage() {
                     </div>
                 </div>
             </section>
+
+            {/* Blog Posts */}
+            <BlogSection
+                category="self-develop"
+                title="Self-Development &"
+                subtitle="EA Guides"
+                description="Tutorials, strategies, and insights for building your own Expert Advisors."
+            />
 
             {/* CTA */}
             <section className="w-full py-20 px-6">
