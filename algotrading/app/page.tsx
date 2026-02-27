@@ -272,7 +272,7 @@ export default function Home() {
         </div>
       </section>
 
-      <BlogSection category="pre-bots" />
+      <BlogSection category="pre-built" />
 
       {/* FINAL CTA */}
       <section className="w-full py-20 px-6">

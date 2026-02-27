@@ -1,4 +1,5 @@
-import { prisma } from "./prisma";
+// Backend API URL - uses environment variable or falls back to production URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.algotradingbot.online";
 
 export interface BlogPost {
     id: string;
@@ -6,120 +7,70 @@ export interface BlogPost {
     slug: string;
     description: string;
     content: string;
-    category: "pre-built bots" | "self-develop-bots" | string;
+    category: string;
     author: string;
     publishDate: string;
     image: string;
     readTime: string;
     isDownloadable?: boolean;
-    downloadUrl?: string; // If free download
+    downloadUrl?: string;
     price?: "Free" | "Premium";
 }
 
+// Default fallback categories
 export const BLOG_CATEGORIES = [
     "All",
-    "pre-built bots",
-    "self-develop-bots"
+    "pre-built",
+    "self-develop"
 ] as const;
 
 export async function getAllCategories(): Promise<string[]> {
     try {
-        const categories = await prisma.category.findMany({
-            where: { status: "active" },
-            orderBy: { name: "asc" }
-        });
-        if (categories.length > 0) {
-            return ["All", ...categories.map(c => c.name)];
+        const res = await fetch(`${API_URL}/categories/`, { next: { revalidate: 60 } });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.length > 0) {
+                return ["All", ...data.map((c: any) => c.name)];
+            }
         }
     } catch (e) {
-        console.error("Failed to fetch categories:", e);
+        console.error("Failed to fetch categories from API:", e);
     }
-    // Fallback to hardcoded
     return [...BLOG_CATEGORIES];
 }
 
-function mapToBlogPost(blog: any): BlogPost {
-    const categoryName = blog.categories && blog.categories.length > 0
-        ? blog.categories[0].category.name
-        : "pre-built bots";
-
-    // Fallback image if null
-    const image = blog.featuredImages || "https://images.unsplash.com/photo-1611974765270-ca12586343bb?q=80&w=1000&auto=format&fit=crop";
-
-    let publishDate = "Recently";
+export async function getAllPosts(): Promise<BlogPost[]> {
     try {
-        const dateObj = blog.createdAt instanceof Date ? blog.createdAt : new Date(blog.createdAt || Date.now());
-        if (!isNaN(dateObj.getTime())) {
-            publishDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        const res = await fetch(`${API_URL}/api/posts`, { next: { revalidate: 60 } });
+        if (res.ok) {
+            return await res.json();
         }
     } catch (e) {
-        // Fallback already set
+        console.error("Failed to fetch posts from API:", e);
     }
-
-    return {
-        id: blog.id.toString(),
-        title: blog.title,
-        slug: blog.seoSlug,
-        description: blog.excerpt || "",
-        content: blog.content,
-        category: categoryName,
-        author: blog.author || "AlgoTeam",
-        publishDate: publishDate,
-        image,
-        readTime: "5 min read", // Approx
-        isDownloadable: !!blog.downloadLink,
-        downloadUrl: blog.downloadLink || undefined,
-        price: blog.downloadLink ? "Free" : "Premium",
-    };
-}
-
-export async function getAllPosts(): Promise<BlogPost[]> {
-    const blogs = await prisma.blog.findMany({
-        where: { status: "published" },
-        include: { categories: { include: { category: true } } },
-        orderBy: { createdAt: "desc" }
-    });
-    return blogs.map(mapToBlogPost);
-}
-
-export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
-    const blog = await prisma.blog.findUnique({
-        where: { seoSlug: slug },
-        include: { categories: { include: { category: true } } }
-    });
-
-    if (!blog) return undefined;
-    return mapToBlogPost(blog);
+    return [];
 }
 
 export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
     if (category === "All") return getAllPosts();
+    try {
+        const res = await fetch(`${API_URL}/api/posts?category=${encodeURIComponent(category)}`, { next: { revalidate: 60 } });
+        if (res.ok) {
+            return await res.json();
+        }
+    } catch (e) {
+        console.error("Failed to fetch posts by category:", e);
+    }
+    return [];
+}
 
-    const blogs = await prisma.blog.findMany({
-        where: {
-            status: "published",
-            categories: {
-                some: {
-                    category: {
-                        name: category
-                    }
-                }
-            }
-        },
-        include: { categories: { include: { category: true } } },
-        orderBy: { createdAt: "desc" }
-    });
-
-    return blogs.map(mapToBlogPost);
+export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    // Fetch all posts and find by slug (backend doesn't have a slug endpoint yet)
+    const posts = await getAllPosts();
+    return posts.find(p => p.slug === slug);
 }
 
 export async function getLatestPosts(limit: number = 6): Promise<BlogPost[]> {
-    const blogs = await prisma.blog.findMany({
-        where: { status: "published" },
-        take: limit,
-        include: { categories: { include: { category: true } } },
-        orderBy: { createdAt: "desc" }
-    });
-    return blogs.map(mapToBlogPost);
+    const posts = await getAllPosts();
+    return posts.slice(0, limit);
 }
-

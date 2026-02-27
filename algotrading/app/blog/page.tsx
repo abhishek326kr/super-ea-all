@@ -4,6 +4,8 @@ import { getAllPosts, getAllCategories } from "@/lib/blog-data";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "AlgoTradingBot Blog - Expert Insights & Market Analysis",
     description: "Stay ahead with advanced algorithmic trading strategies, AI market analysis, and trading bot tutorials.",

@@ -4,12 +4,29 @@ import Image from "next/image";
 import { ArrowRight, Calendar, Clock, Tag } from "lucide-react";
 import { BlogPost } from "@/lib/blog-data";
 
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1611974765270-ca12586343bb?q=80&w=1000&auto=format&fit=crop";
+
+function safeImageUrl(raw: string | undefined | null): string {
+    if (!raw || typeof raw !== "string") return FALLBACK_IMAGE;
+    // Handle JSON array strings like '["https://..."]'
+    if (raw.startsWith("[")) {
+        try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
+        } catch { /* fall through */ }
+    }
+    // Check if it's a valid URL
+    if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+    return FALLBACK_IMAGE;
+}
+
 interface BlogCardProps {
     post: BlogPost;
     index: number;
 }
 
 export default function BlogCard({ post, index }: BlogCardProps) {
+    const imageUrl = safeImageUrl(post.image);
     return (
         <Link href={`/blog/${post.slug}`} className="group h-full flex flex-col">
             <div
@@ -18,7 +35,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
                 {/* Image Section */}
                 <div className="relative w-full h-48 overflow-hidden">
                     <Image
-                        src={post.image}
+                        src={imageUrl}
                         alt={post.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"

@@ -37,7 +37,9 @@ app.add_middleware(
         "http://localhost:3000",             # Local Dev (Next.js)
         "http://localhost:5173",             # Local Dev (Vite)
         "http://localhost:8080",             # Local Dev (Other)
-        "https://app.algotradingbot.online",  # Production
+        "https://app.algotradingbot.online",  # Production Admin
+        "https://algotradingbot.online",      # Production Landing Page
+        "https://www.algotradingbot.online",  # Production Landing Page (www)
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -783,6 +785,21 @@ async def get_public_posts(
                 elif p.get("category"):
                     cat_name = p.get("category")
                     
+                # Parse featuredImages (stored as JSON string array like '["url1","url2"]')
+                raw_img = p.get("featuredImages") or p.get("image") or ""
+                fallback_img = "https://images.unsplash.com/photo-1611974765270-ca12586343bb?q=80&w=1000&auto=format&fit=crop"
+                if raw_img:
+                    try:
+                        parsed = json.loads(raw_img)
+                        if isinstance(parsed, list) and len(parsed) > 0:
+                            image_url = parsed[0]
+                        else:
+                            image_url = str(parsed) if parsed else fallback_img
+                    except (json.JSONDecodeError, TypeError):
+                        image_url = raw_img if raw_img.startswith("http") else fallback_img
+                else:
+                    image_url = fallback_img
+
                 formatted_posts.append({
                     "id": str(p["id"]),
                     "title": p.get("title") or p.get("h1") or "",
@@ -792,7 +809,7 @@ async def get_public_posts(
                     "category": cat_name,
                     "author": p.get("author") or "AlgoTeam",
                     "publishDate": pub_date,
-                    "image": p.get("featuredImages") or p.get("image") or "https://images.unsplash.com/photo-1611974765270-ca12586343bb?q=80&w=1000&auto=format&fit=crop",
+                    "image": image_url,
                     "readTime": "5 min read",
                     "isDownloadable": bool(p.get("downloadLink")),
                     "downloadUrl": p.get("downloadLink"),

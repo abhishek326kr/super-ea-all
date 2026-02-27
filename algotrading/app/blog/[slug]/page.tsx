@@ -6,6 +6,9 @@ import { ArrowLeft, Calendar, User, Share2, Facebook, Twitter, Linkedin, Downloa
 import BlogCard from "@/components/BlogCard";
 import { Metadata } from "next";
 
+// Force dynamic rendering since posts are fetched from backend API
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     const post = await getPostBySlug(slug);
@@ -21,13 +24,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             images: [post.image]
         }
     };
-}
-
-export async function generateStaticParams() {
-    const posts = await getAllPosts();
-    return posts.map((post) => ({
-        slug: post.slug,
-    }));
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {

@@ -116,7 +116,7 @@ export default function PreBotIndicatorsPage() {
 
             {/* Blogs */}
             <BlogSection
-                category="pre-bots"
+                category="pre-built"
                 title="Pre-Bot Strategies &"
                 subtitle="Insights"
                 description="Learn the latest strategies and techniques for using pre-built trading bots."
