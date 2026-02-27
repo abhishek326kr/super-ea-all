@@ -598,6 +598,75 @@ async def get_site_posts(
                     params["category"] = category
             
             where_sql = " WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+            
+            # Build ORDER BY
+            sort_map = {
+                "id_desc": "id DESC",
+                "id_asc": "id ASC",
+                "title_asc": "title ASC",
+                "title_desc": "title DESC",
+                "date_desc": "\"createdAt\" DESC",
+                "date_asc": "\"createdAt\" ASC"
+            }
+            order_by = sort_map.get(sort, "id DESC")
+            
+            # Get total count with filters
+            count_sql = text(f'SELECT COUNT(*) FROM "{table_name}"{where_sql}')
+            total = conn.execute(count_sql, params).scalar() or 0
+            
+            # Get stats by status
+            stats_sql = text(f'''
+                SELECT status, COUNT(*) as count 
+                FROM "{table_name}" 
+                GROUP BY status
+            ''')
+            stats_result = conn.execute(stats_sql)
+            stats = {row[0]: row[1] for row in stats_result.fetchall()}
+            
+            # Get paginated posts
+            sql = text(f'SELECT * FROM "{table_name}"{where_sql} ORDER BY {order_by} LIMIT :limit OFFSET :offset')
+            result = conn.execute(sql, params)
+            rows = result.fetchall()
+            columns = result.keys()
+            
+            # Convert to list of dicts
+            posts = [dict(zip(columns, row)) for row in rows]
+            
+            # Convert non-serializable types
+            import datetime
+            for post in posts:
+                for key, value in post.items():
+                    if isinstance(value, (datetime.datetime, datetime.date)):
+                        post[key] = str(value)
+            
+            # Append Category details
+            if has_cat_table and posts:
+                post_ids = [str(p["id"]) for p in posts]
+                ids_str = ",".join(post_ids)
+                cat_sql = text(f'''
+                    SELECT bc."blogId", c.name 
+                    FROM "BlogCategory" bc 
+                    JOIN "Category" c ON bc."categoryId" = c."categoryId" 
+                    WHERE bc."blogId" IN ({ids_str})
+                ''')
+                cat_rows = conn.execute(cat_sql).fetchall()
+                cat_map = {row[0]: row[1] for row in cat_rows}
+                for post in posts:
+                    post["category"] = cat_map.get(post["id"])
+                    
+            return {
+                "site_id": site_id,
+                "table": table_name,
+                "page": page,
+                "limit": limit,
+                "total": total,
+                "total_pages": (total + limit - 1) // limit if total > 0 else 1,
+                "stats": stats,
+                "posts": posts
+            }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 # ==========================================
 # PUBLIC API FOR FRONTEND (algotradingbot.online)
@@ -735,76 +804,6 @@ async def get_public_posts(
     except Exception as e:
         print(f"Public API error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-            
-            # Build ORDER BY
-            sort_map = {
-                "id_desc": "id DESC",
-                "id_asc": "id ASC",
-                "title_asc": "title ASC",
-                "title_desc": "title DESC",
-                "date_desc": "\"createdAt\" DESC",
-                "date_asc": "\"createdAt\" ASC"
-            }
-            order_by = sort_map.get(sort, "id DESC")
-            
-            # Get total count with filters
-            count_sql = text(f'SELECT COUNT(*) FROM "{table_name}"{where_sql}')
-            total = conn.execute(count_sql, params).scalar() or 0
-            
-            # Get stats by status
-            stats_sql = text(f'''
-                SELECT status, COUNT(*) as count 
-                FROM "{table_name}" 
-                GROUP BY status
-            ''')
-            stats_result = conn.execute(stats_sql)
-            stats = {row[0]: row[1] for row in stats_result.fetchall()}
-            
-            # Get paginated posts
-            sql = text(f'SELECT * FROM "{table_name}"{where_sql} ORDER BY {order_by} LIMIT :limit OFFSET :offset')
-            result = conn.execute(sql, params)
-            rows = result.fetchall()
-            columns = result.keys()
-            
-            # Convert to list of dicts
-            posts = [dict(zip(columns, row)) for row in rows]
-            
-            # Convert non-serializable types
-            import datetime
-            for post in posts:
-                for key, value in post.items():
-                    if isinstance(value, (datetime.datetime, datetime.date)):
-                        post[key] = str(value)
-            
-            # Append Category details
-            if has_cat_table and posts:
-                post_ids = [str(p["id"]) for p in posts]
-                ids_str = ",".join(post_ids)
-                cat_sql = text(f'''
-                    SELECT bc."blogId", c.name 
-                    FROM "BlogCategory" bc 
-                    JOIN "Category" c ON bc."categoryId" = c."categoryId" 
-                    WHERE bc."blogId" IN ({ids_str})
-                ''')
-                cat_rows = conn.execute(cat_sql).fetchall()
-                cat_map = {row[0]: row[1] for row in cat_rows}
-                for post in posts:
-                    post["category"] = cat_map.get(post["id"])
-                    
-            return {
-                "site_id": site_id,
-                "table": table_name,
-                "page": page,
-                "limit": limit,
-                "total": total,
-                "total_pages": (total + limit - 1) // limit if total > 0 else 1,
-                "stats": stats,
-                "posts": posts
-            }
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
 
 @app.get("/sites/{site_id}/posts/{post_id}")
 async def get_single_post(
