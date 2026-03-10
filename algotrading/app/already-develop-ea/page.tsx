@@ -5,6 +5,14 @@ import { ArrowRight, CheckCircle2, Download, Settings, Shield, RefreshCw, Wrench
 export const metadata: Metadata = {
     title: "Already Developed EA - AlgoTradingBot",
     description: "Browse and download our collection of pre-developed Expert Advisors. Tested, optimized, and ready for deployment on MT4/MT5.",
+    openGraph: {
+        title: "Already Developed EA - AlgoTradingBot",
+        description: "Browse and download our collection of pre-developed Expert Advisors. Tested, optimized, and ready for deployment on MT4/MT5.",
+    },
+    twitter: {
+        title: "Already Developed EA - AlgoTradingBot",
+        description: "Browse and download our collection of pre-developed Expert Advisors. Tested, optimized, and ready for deployment on MT4/MT5.",
+    },
 };
 
 const eas = [

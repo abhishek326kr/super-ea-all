@@ -6,6 +6,14 @@ import HowWeWorkClient from "./HowWeWorkClient";
 export const metadata: Metadata = {
     title: "How We Work | Step-by-Step Algo Development Process",
     description: "Learn how we build your custom trading algorithm in 7 transparent steps. From strategy specification to final delivery, see real proofs of our workflow.",
+    openGraph: {
+        title: "How We Work | Step-by-Step Algo Development Process",
+        description: "Learn how we build your custom trading algorithm in 7 transparent steps.",
+    },
+    twitter: {
+        title: "How We Work | Step-by-Step Algo Development Process",
+        description: "Learn how we build your custom trading algorithm in 7 transparent steps.",
+    },
 };
 
 export default function HowWeWorkPage() {

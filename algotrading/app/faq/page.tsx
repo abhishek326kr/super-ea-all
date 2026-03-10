@@ -6,6 +6,14 @@ import { ChevronDown } from 'lucide-react';
 export const metadata: Metadata = {
     title: 'FAQ - AlgoTradingBot',
     description: 'Frequently Asked Questions about our algorithmic trading bots, payments, and support.',
+    openGraph: {
+        title: 'FAQ - AlgoTradingBot',
+        description: 'Frequently Asked Questions about our algorithmic trading bots, payments, and support.',
+    },
+    twitter: {
+        title: 'FAQ - AlgoTradingBot',
+        description: 'Frequently Asked Questions about our algorithmic trading bots, payments, and support.',
+    },
 };
 
 export default function FAQPage() {

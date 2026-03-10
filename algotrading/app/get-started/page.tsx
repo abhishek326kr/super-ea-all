@@ -6,6 +6,14 @@ import { ArrowRight, CheckCircle2, Zap, Shield, Bot, BarChart3 } from "lucide-re
 export const metadata: Metadata = {
     title: "Get Started - AlgoTradingBot | Start Trading in Minutes",
     description: "Choose your plan and start automated trading in minutes. Free paper trading, no credit card required.",
+    openGraph: {
+        title: "Get Started - AlgoTradingBot | Start Trading in Minutes",
+        description: "Choose your plan and start automated trading in minutes. Free paper trading, no credit card required.",
+    },
+    twitter: {
+        title: "Get Started - AlgoTradingBot | Start Trading in Minutes",
+        description: "Choose your plan and start automated trading in minutes. Free paper trading, no credit card required.",
+    },
 };
 
 const plans = [

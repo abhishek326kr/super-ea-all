@@ -7,6 +7,14 @@ import { ArrowLeft } from 'lucide-react';
 export const metadata: Metadata = {
     title: 'Privacy Policy - AlgoTradingBot',
     description: 'Privacy Policy details for AlgoTradingBot use.',
+    openGraph: {
+        title: 'Privacy Policy - AlgoTradingBot',
+        description: 'Privacy Policy details for AlgoTradingBot use.',
+    },
+    twitter: {
+        title: 'Privacy Policy - AlgoTradingBot',
+        description: 'Privacy Policy details for AlgoTradingBot use.',
+    },
 };
 
 export default function PrivacyPolicyPage() {

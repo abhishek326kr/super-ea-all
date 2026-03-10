@@ -7,6 +7,14 @@ import { ArrowLeft } from 'lucide-react';
 export const metadata: Metadata = {
     title: 'Terms & Conditions - AlgoTradingBot',
     description: 'Terms of Service and Agreement for AlgoTradingBot.online.',
+    openGraph: {
+        title: 'Terms & Conditions - AlgoTradingBot',
+        description: 'Terms of Service and Agreement for AlgoTradingBot.online.',
+    },
+    twitter: {
+        title: 'Terms & Conditions - AlgoTradingBot',
+        description: 'Terms of Service and Agreement for AlgoTradingBot.online.',
+    },
 };
 
 export default function TermsPage() {

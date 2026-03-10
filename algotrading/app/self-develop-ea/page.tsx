@@ -6,6 +6,14 @@ import BlogSection from "@/components/BlogSection";
 export const metadata: Metadata = {
     title: "Self-Develop EA - AlgoTradingBot | Build Your Own Expert Advisor",
     description: "Learn to build your own Expert Advisors with our comprehensive tools, tutorials, and development environment. From beginner to professional MQL developer.",
+    openGraph: {
+        title: "Self-Develop EA - Build Your Own Expert Advisor",
+        description: "Learn to build your own Expert Advisors with our comprehensive tools, tutorials, and development environment.",
+    },
+    twitter: {
+        title: "Self-Develop EA - Build Your Own Expert Advisor",
+        description: "Learn to build your own Expert Advisors with our comprehensive tools, tutorials, and development environment.",
+    },
 };
 
 export default function SelfDevelopEAPage() {

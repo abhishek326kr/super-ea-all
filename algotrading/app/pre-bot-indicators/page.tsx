@@ -6,6 +6,14 @@ import BlogSection from "@/components/BlogSection";
 export const metadata: Metadata = {
     title: "Pre-Built BOTs & Indicators - AlgoTradingBot",
     description: "Ready-to-deploy trading bots and custom indicators for MT4/MT5. Tested, optimized, and profitable strategies available instantly.",
+    openGraph: {
+        title: "Pre-Built BOTs & Indicators - AlgoTradingBot",
+        description: "Ready-to-deploy trading bots and custom indicators for MT4/MT5. Tested, optimized, and profitable strategies available instantly.",
+    },
+    twitter: {
+        title: "Pre-Built BOTs & Indicators - AlgoTradingBot",
+        description: "Ready-to-deploy trading bots and custom indicators for MT4/MT5. Tested, optimized, and profitable strategies available instantly.",
+    },
 };
 
 const bots = [

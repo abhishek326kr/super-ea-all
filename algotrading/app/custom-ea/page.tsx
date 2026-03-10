@@ -39,6 +39,14 @@ const testimonials = [
 export const metadata: Metadata = {
     title: "Custom EA Development - AlgoTradingBot",
     description: "Get a fully custom Expert Advisor built to your exact trading strategy. Professional MT4/MT5 EA development with backtesting and optimization.",
+    openGraph: {
+        title: "Custom EA Development - AlgoTradingBot",
+        description: "Get a fully custom Expert Advisor built to your exact trading strategy. Professional MT4/MT5 EA development with backtesting and optimization.",
+    },
+    twitter: {
+        title: "Custom EA Development - AlgoTradingBot",
+        description: "Get a fully custom Expert Advisor built to your exact trading strategy. Professional MT4/MT5 EA development with backtesting and optimization.",
+    },
 };
 
 export default function CustomEAPage() {

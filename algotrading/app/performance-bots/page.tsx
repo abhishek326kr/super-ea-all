@@ -6,6 +6,14 @@ import { ArrowRight, TrendingUp, Shield, Zap, Activity } from "lucide-react";
 export const metadata: Metadata = {
     title: "Performance & Live Results - AlgoTradingBot",
     description: "View live trading performance, backtest results, and verified track records of our algorithmic trading bots.",
+    openGraph: {
+        title: "Performance & Live Results - AlgoTradingBot",
+        description: "View live trading performance, backtest results, and verified track records of our algorithmic trading bots.",
+    },
+    twitter: {
+        title: "Performance & Live Results - AlgoTradingBot",
+        description: "View live trading performance, backtest results, and verified track records of our algorithmic trading bots.",
+    },
 };
 
 const bots = [

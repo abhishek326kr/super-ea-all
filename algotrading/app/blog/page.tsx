@@ -9,6 +9,14 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "AlgoTradingBot Blog - Expert Insights & Market Analysis",
     description: "Stay ahead with advanced algorithmic trading strategies, AI market analysis, and trading bot tutorials.",
+    openGraph: {
+        title: "AlgoTradingBot Blog - Expert Insights & Market Analysis",
+        description: "Stay ahead with advanced algorithmic trading strategies, AI market analysis, and trading bot tutorials.",
+    },
+    twitter: {
+        title: "AlgoTradingBot Blog - Expert Insights & Market Analysis",
+        description: "Stay ahead with advanced algorithmic trading strategies, AI market analysis, and trading bot tutorials.",
+    },
 };
 
 export default async function BlogPage() {

@@ -7,6 +7,14 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Contact Us - AlgoTradingBot',
     description: 'Get in touch for custom trading bot development, premium strategy access, or technical support.',
+    openGraph: {
+        title: 'Contact Us - AlgoTradingBot',
+        description: 'Get in touch for custom trading bot development, premium strategy access, or technical support.',
+    },
+    twitter: {
+        title: 'Contact Us - AlgoTradingBot',
+        description: 'Get in touch for custom trading bot development, premium strategy access, or technical support.',
+    },
 };
 
 export default function ContactPage() {

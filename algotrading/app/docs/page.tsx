@@ -7,6 +7,14 @@ import { ArrowLeft, BookOpen, FileText, Settings, Code, Video } from 'lucide-rea
 export const metadata: Metadata = {
     title: 'Documentation - AlgoTradingBot',
     description: 'User guides and documentation for installing and using our trading bots.',
+    openGraph: {
+        title: 'Documentation - AlgoTradingBot',
+        description: 'User guides and documentation for installing and using our trading bots.',
+    },
+    twitter: {
+        title: 'Documentation - AlgoTradingBot',
+        description: 'User guides and documentation for installing and using our trading bots.',
+    },
 };
 
 export default function DocsPage() {
