@@ -4,6 +4,9 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import HowWeWorkClient from "./HowWeWorkClient";
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/how-we-work",
+        },
     title: "How We Work | Step-by-Step Algo Development Process",
     description: "Learn how we build your custom trading algorithm in 7 transparent steps. From strategy specification to final delivery, see real proofs of our workflow.",
     openGraph: {

@@ -4,6 +4,9 @@ import { Metadata } from 'next';
 import { ChevronDown } from 'lucide-react';
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/faq",
+        },
     title: 'FAQ - AlgoTradingBot',
     description: 'Frequently Asked Questions about our algorithmic trading bots, payments, and support.',
     openGraph: {

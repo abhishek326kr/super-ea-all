@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Download, Settings, Shield, RefreshCw, Wrench, HeadphonesIcon } from "lucide-react";
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/already-develop-ea",
+        },
     title: "Already Developed EA - AlgoTradingBot",
     description: "Browse and download our collection of pre-developed Expert Advisors. Tested, optimized, and ready for deployment on MT4/MT5.",
     openGraph: {

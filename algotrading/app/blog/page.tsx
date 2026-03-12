@@ -7,6 +7,9 @@ import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/blog",
+        },
     title: "AlgoTradingBot Blog - Expert Insights & Market Analysis",
     description: "Stay ahead with advanced algorithmic trading strategies, AI market analysis, and trading bot tutorials.",
     openGraph: {

@@ -20,6 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: `${post.title} - AlgoTradingBot Blog`,
         description: post.description,
+        alternates: {
+            canonical: `https://algotradingbot.online/blog/${slug}`,
+        },
         openGraph: {
             title: `${post.title} - AlgoTradingBot Blog`,
             description: post.description,

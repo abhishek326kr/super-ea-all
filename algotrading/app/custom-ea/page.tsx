@@ -37,6 +37,9 @@ const testimonials = [
 ];
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/custom-ea",
+        },
     title: "Custom EA Development - AlgoTradingBot",
     description: "Get a fully custom Expert Advisor built to your exact trading strategy. Professional MT4/MT5 EA development with backtesting and optimization.",
     openGraph: {

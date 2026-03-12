@@ -4,6 +4,9 @@ import { ArrowRight, CheckCircle2, Bot, TrendingUp, BarChart3, Activity, Gauge, 
 import BlogSection from "@/components/BlogSection";
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/pre-bot-indicators",
+        },
     title: "Pre-Built BOTs & Indicators - AlgoTradingBot",
     description: "Ready-to-deploy trading bots and custom indicators for MT4/MT5. Tested, optimized, and profitable strategies available instantly.",
     openGraph: {

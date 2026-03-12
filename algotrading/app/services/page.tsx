@@ -4,6 +4,9 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/services",
+        },
     title: "Services - AlgoTradingBot | Algorithmic Trading Solutions",
     description: "Institutional-grade algorithmic trading infrastructure for brokers, hedge funds, prop desks, quant developers, and retail traders.",
     openGraph: {

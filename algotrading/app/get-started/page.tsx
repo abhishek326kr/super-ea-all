@@ -4,6 +4,9 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Zap, Shield, Bot, BarChart3 } from "lucide-react";
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/get-started",
+        },
     title: "Get Started - AlgoTradingBot | Start Trading in Minutes",
     description: "Choose your plan and start automated trading in minutes. Free paper trading, no credit card required.",
     openGraph: {

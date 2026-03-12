@@ -210,6 +210,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: `${service.title} - AlgoTradingBot`,
         description: service.heroDesc,
+        alternates: {
+            canonical: `https://algotradingbot.online/services/${slug}`,
+        },
         openGraph: {
             title: `${service.title} - AlgoTradingBot`,
             description: service.heroDesc,

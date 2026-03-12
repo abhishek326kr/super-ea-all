@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpen, FileText, Settings, Code, Video } from 'lucide-react';
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/docs",
+        },
     title: 'Documentation - AlgoTradingBot',
     description: 'User guides and documentation for installing and using our trading bots.',
     openGraph: {

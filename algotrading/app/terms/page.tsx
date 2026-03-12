@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/terms",
+        },
     title: 'Terms & Conditions - AlgoTradingBot',
     description: 'Terms of Service and Agreement for AlgoTradingBot.online.',
     openGraph: {

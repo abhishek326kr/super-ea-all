@@ -5,6 +5,9 @@ import { Mail, Send, MapPin, Phone, MessageCircle } from 'lucide-react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/contact",
+        },
     title: 'Contact Us - AlgoTradingBot',
     description: 'Get in touch for custom trading bot development, premium strategy access, or technical support.',
     openGraph: {

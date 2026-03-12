@@ -18,7 +18,7 @@ const SITE_URL = process.env.SITE_URL || "https://algotradingbot.online";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: {
-    canonical: "/",
+    canonical: "https://algotradingbot.online",
   },
   title: {
     default: "AlgoTradingBot.online - Intelligent Algorithmic Trading",

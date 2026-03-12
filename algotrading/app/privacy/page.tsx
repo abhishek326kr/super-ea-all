@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
+    alternates: {
+        canonical: "https://algotradingbot.online/privacy",
+        },
     title: 'Privacy Policy - AlgoTradingBot',
     description: 'Privacy Policy details for AlgoTradingBot use.',
     openGraph: {
